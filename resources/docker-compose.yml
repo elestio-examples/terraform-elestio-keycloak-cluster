@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+  keycloak:
+    image: jboss/keycloak:${SOFTWARE_VERSION_TAG}
+    container_name: keycloak
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '172.17.0.1:8080:8080'
+      - '7600:7600'
+    environment:
+      DB_VENDOR: 'postgres'
+      DB_ADDR: $POSTGRESQL_HOST
+      DB_PORT: $POSTGRESQL_PORT
+      DB_DATABASE: $POSTGRESQL_DATABASE
+      DB_SCHEMA: $POSTGRESQL_SCHEMA
+      DB_USER: $POSTGRESQL_USERNAME
+      DB_PASSWORD: $POSTGRESQL_PASSWORD
+      KEYCLOAK_USER: $KEYCLOAK_ADMIN_USER
+      KEYCLOAK_PASSWORD: $KEYCLOAK_ADMIN_PASSWORD
+      KEYCLOAK_STATISTICS: 'all'
+      KEYCLOAK_LOGLEVEL: 'INFO'
+      ROOT_LOGLEVEL: 'INFO'
+      PROXY_ADDRESS_FORWARDING: 'true'
+      JAVA_OPTS: '-XX:MaxRAMPercentage=75.0 -Djgroups.external_addr=$IPV4'
+      JGROUPS_TRANSPORT_STACK: 'tcp'
+      JGROUPS_DISCOVERY_PROTOCOL: 'JDBC_PING'
+      JGROUPS_DISCOVERY_PROPERTIES: 'datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=500,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))"'
+      CACHE_OWNERS_COUNT: $NODES_COUNT
+      CACHE_OWNERS_AUTH_SESSIONS_COUNT: $NODES_COUNT
