@@ -20,6 +20,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_keycloak_admin"></a> [keycloak\_admin](#output\_keycloak\_admin) | The URL and secrets to connectg to Keycloak Admin on each nodes |
 | <a name="output_keycloak_nodes"></a> [keycloak\_nodes](#output\_keycloak\_nodes) | List of nodes of the Keycloak cluster |
 ## Providers
 

@@ -58,6 +58,11 @@ module "keycloak_cluster" {
   ]
 }
 
+output "keycloak_admin" {
+  value     = module.keycloak_cluster.keycloak_admin
+  sensitive = true
+}
+
 resource "elestio_load_balancer" "load_balancer" {
   project_id    = elestio_project.project.id
   provider_name = "hetzner"
