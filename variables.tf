@@ -54,7 +54,7 @@ variable "nodes" {
   }
 }
 
-variable "global_ssh_key" {
+variable "ssh_key" {
   type = object({
     key_name    = string
     public_key  = string
@@ -68,48 +68,30 @@ variable "global_ssh_key" {
   EOF
 }
 
-variable "postgresql_host" {
-  type        = string
-  nullable    = false
-  description = "PostgreSQL database hostname"
-}
-
-variable "postgresql_port" {
-  type        = string
-  default     = "5432"
-  description = "PostgreSQL database port"
-}
-
-variable "postgresql_database" {
-  type        = string
-  nullable    = false
-  description = "PostgreSQL database name where Keycloak will store its data"
-}
-
-variable "postgresql_schema" {
-  type        = string
-  default     = "public"
-  description = "PostgreSQL database schema where Keycloak will store its data"
-}
-
-variable "postgresql_username" {
-  type        = string
-  nullable    = false
-  description = "PostgreSQL database username"
-}
-
-variable "postgresql_password" {
-  type        = string
-  nullable    = false
+variable "postgresql" {
+  type = object({
+    host     = string
+    port     = optional(string, "5432")
+    database = string
+    schema   = optional(string, "public")
+    username = string
+    password = string
+  })
+  default     = null
   sensitive   = true
-  description = "PostgreSQL database password"
+  description = <<-EOF
+    PostgreSQL database configuration.
+    If null or not set, the module will create a new PostgreSQL database using the first node configuration (provider, datacenter, server_type).
+    If you already have a PostgreSQL database, you can provide its configuration here.
+  EOF
 }
 
-variable "keycloak_admin_user" {
-  type        = string
-  default     = "root"
-  description = "Name of the adminUser created when keycloak starts."
-}
+# TODO: handle custom admin user (update /opt/proxy_443.secret)
+# variable "keycloak_admin_user" {
+#   type        = string
+#   default     = "root"
+#   description = "Name of the adminUser created when keycloak starts."
+# }
 
 variable "keycloak_admin_password" {
   type        = string
