@@ -10,6 +10,7 @@ variable "project_id" {
 variable "keycloak_version" {
   type        = string
   nullable    = true
+  default     = null
   description = <<-EOF
     Keycloak version to use.
     Leave empty or set to `null` to use the Elestio recommended version.
@@ -24,14 +25,14 @@ variable "nodes" {
       provider_name = string
       datacenter    = string
       server_type   = string
-      support_level = string
+      support_level = optional(string, "level1")
       admin_email   = string
-      ssh_keys = list(
+      ssh_keys = optional(list(
         object({
           key_name   = string
           public_key = string
         })
-      )
+      ), [])
     })
   )
   default     = []
@@ -43,6 +44,8 @@ variable "nodes" {
     - `support_level`: `level1`, `level2` or `level3` [documentation](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/keycloak#support_level).
 
     - `admin_email`: Email address of the administrator that will receive information about the node.
+
+    - `ssh_keys`: List of SSH keys that will be added to the node. [documentation](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/keycloak#ssh_keys).
   EOF
 
   validation {
@@ -104,7 +107,7 @@ variable "postgresql_password" {
 
 variable "keycloak_admin_user" {
   type        = string
-  nullable    = false
+  default     = "root"
   description = "Name of the adminUser created when keycloak starts."
 }
 
@@ -118,23 +121,23 @@ variable "keycloak_admin_password" {
     Require at least 10 characters, one uppercase letter, one lowercase letter and one number.
   EOF
   validation {
-    condition     = length(var.keycloak_password) > 10
-    error_message = "The password must be longer than 10 characters."
+    condition     = length(var.keycloak_admin_password) >= 10
+    error_message = "The password must be at least 10 characters long."
   }
   validation {
-    condition     = can(regex("^[a-zA-Z0-9-]+$", var.keycloak_password))
+    condition     = can(regex("^[a-zA-Z0-9-]+$", var.keycloak_admin_password))
     error_message = "The password can only contain alphanumeric characters or hyphens `-`."
   }
   validation {
-    condition     = can(regex("^(?=.*[A-Z]).*$", var.keycloak_password))
+    condition     = can(regex("[A-Z]", var.keycloak_admin_password))
     error_message = "The password must contain at least one uppercase letter."
   }
   validation {
-    condition     = can(regex("^(?=.*[a-z]).*$", var.keycloak_password))
+    condition     = can(regex("[a-z]", var.keycloak_admin_password))
     error_message = "The password must contain at least one lowercase letter."
   }
   validation {
-    condition     = can(regex("^(?=.*[0-9]).*$", var.keycloak_password))
+    condition     = can(regex("[0-9]", var.keycloak_admin_password))
     error_message = "The password must contain at least one number."
   }
 }

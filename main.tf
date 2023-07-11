@@ -1,5 +1,5 @@
 resource "elestio_keycloak" "nodes" {
-  for_each = { for key, value in var.nodes : key => value }
+  for_each = { for value in var.nodes : value.server_name => value }
 
   project_id       = var.project_id
   version          = var.keycloak_version
@@ -10,7 +10,7 @@ resource "elestio_keycloak" "nodes" {
   server_type      = each.value.server_type
   support_level    = each.value.support_level
   admin_email      = each.value.admin_email
-  ssh_keys         = contact(each.value.ssh_keys, [var.global_ssh_key])
+  ssh_keys         = concat(each.value.ssh_keys, [var.global_ssh_key])
 
   connection {
     type        = "ssh"
@@ -22,6 +22,7 @@ resource "elestio_keycloak" "nodes" {
     inline = [
       "cd /opt/app",
       "docker-compose down",
+      "rm -rf postgresql_data"
     ]
   }
 
@@ -31,19 +32,19 @@ resource "elestio_keycloak" "nodes" {
   }
 }
 
-// The .env file contains some variables that change depending on the number of nodes
-// Triggering this resource when the number of nodes changes allows us to update the .env file
-// of each nodes and restart the docker-compose
-resource "null_resource" "nodes_configuration" {
-  for_each = elestio_keycloak.nodes
+# The .env file contains some variables that change depending on the number of nodes
+# Triggering this resource when the number of nodes changes allows us to update the .env file
+# of each nodes and restart the docker-compose
+resource "null_resource" "update_nodes_env" {
+  for_each = { for node in elestio_keycloak.nodes : node.server_name => node }
 
   triggers = {
-    cluster_nodes_ids = join(",", elestio_keycloak.nodes[*].id)
+    cluster_nodes_ids = join(",", [for n in elestio_keycloak.nodes : n.id])
   }
 
   connection {
     type        = "ssh"
-    host        = each.ipv4
+    host        = each.value.ipv4
     private_key = var.global_ssh_key.private_key
   }
 

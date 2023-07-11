@@ -9,13 +9,12 @@ variable "elestio_api_token" {
   sensitive = true
 }
 
-# If you want to store your ssh key in string, uncomment the following lines:
-# variable "ssh_key" {
-#   type = object({
-#     name        = string
-#     public_key  = string
-#     private_key = string
-#   })
-#   nullable  = false
-#   sensitive = true
-# }
+variable "keycloak_admin_password" {
+  type        = string
+  nullable    = false
+  sensitive   = true
+  description = <<-EOF
+    Password of the adminUser created when keycloak starts.
+    This password will be used to connect to the keycloak admin console.
+  EOF
+}
