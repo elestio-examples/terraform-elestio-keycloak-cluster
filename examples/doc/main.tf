@@ -37,3 +37,8 @@ module "keycloak_cluster" {
     # You can see and udpdate your resources quota on https://dash.elest.io/account/add-quota
   ]
 }
+
+output "keycloak_admin" {
+  value     = module.keycloak_cluster.keycloak_admin
+  sensitive = true
+}

@@ -1,6 +1,106 @@
 <!-- BEGIN_TF_DOCS -->
 # Elestio Keycloak Cluster Terraform module
 
+## Benefits of a Keycloak cluster
+
+A Keycloak cluster can handle more users without slowing down or crashing, and provides fault tolerance to ensure that the system remains operational.
+It also allows for easy scalability to meet changing demands without replacing the entire system.
+
+
+
+## Usage
+
+```hcl
+module "keycloak_cluster" {
+  source = "elestio-examples/keycloak-cluster/elestio"
+
+  project_id = "1234"
+  postgresql = null
+  # If you want to use an existing PostgreSQL database, you can specify the configuration here:
+  # postgresql = {
+  #   host     = "my-postgresql-host.elest.io"
+  #   port     = "5432"
+  #   database = "keycloak"
+  #   schema   = "public"
+  #   username = "admin"
+  #   password = var.postgresql_password
+  # }
+  keycloak_admin_password = var.keycloak_password
+  ssh_key = {
+    key_name    = "admin"
+    public_key  = file("~/.ssh/id_rsa.pub")
+    private_key = file("~/.ssh/id_rsa")
+  }
+  nodes = [
+    {
+      server_name   = "keycloak-germany"
+      provider_name = "hetzner"
+      datacenter    = "fsn1"
+      server_type   = "SMALL-1C-2G"
+      admin_email   = "admin-germany@email.com"
+    },
+    {
+      server_name   = "keycloak-finlande"
+      provider_name = "hetzner"
+      datacenter    = "hel1"
+      server_type   = "SMALL-1C-2G"
+      admin_email   = "admin-finlande@email.com"
+    },
+    # You can add more nodes here, but you need to have enough resources quota
+    # You can see and udpdate your resources quota on https://dash.elest.io/account/add-quota
+  ]
+}
+
+output "keycloak_admin" {
+  value     = module.keycloak_cluster.keycloak_admin
+  sensitive = true
+}
+```
+
+## What the module does
+
+1. If you don't provide a **Postgres** database config, it creates a new one for you.
+
+2. It configures the Keycloak nodes to use the database and to be clustered together.
+
+3. If you change the number of nodes and re-apply, it will automatically reconfigure the cluster for you.
+
+## Examples
+
+- [Get started](https://github.com/elestio-examples/terraform-elestio-keycloak-cluster/tree/main/examples/get_started) - Ready-to-deploy example which creates a Keycloak Cluster and a Load Balancer.
+
+## How to access the Keycloak nodes
+
+Use `terraform output keycloak_admin` command to output keycloak admin secrets:
+
+```bash
+# keycloak_admin
+{
+  "keycloak-germany": {
+    "url": "https://keycloak-germany-u525.vm.elestio.app/auth",
+    "user": "root",
+    "password": "****",
+  },
+  "keycloak-finlande": {
+    "url": "https://keycloak-finlande-u525.vm.elestio.app/auth",
+    "user": "root",
+    "password": "****",
+  },
+}
+```
+
+Each node is exposed on a different CNAME and IP address.
+If you need to expose the Keycloak nodes on the same IP address, you will need to create separatly a load balancer.
+Check the [ready-to-deploy example](https://github.com/elestio-examples/terraform-elestio-keycloak-cluster/tree/main/examples/get_started) for a full usage example.
+
+## Scale the nodes
+
+To adjust the cluster size:
+
+- Adding nodes: Run `terraform apply` after adding a new node, and it will be seamlessly integrated into the cluster.
+- Removing nodes: The excess nodes will cleanly leave the cluster on the next `terraform apply`.
+
+Please note that changing the node count requires to change the .env of existing nodes. This is done automatically by the module.
 
 
 ## Inputs

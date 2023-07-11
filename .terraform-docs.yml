@@ -16,7 +16,52 @@ sections:
 content: |-
   # Elestio Keycloak Cluster Terraform module
 
+  ## Benefits of a Keycloak cluster
+
+  A Keycloak cluster can handle more users without slowing down or crashing, and provides fault tolerance to ensure that the system remains operational.
+  It also allows for easy scalability to meet changing demands without replacing the entire system.
+
   {{ .Header }}
+
+  ## Usage
+
+  ```hcl
+  {{ include "examples/doc/main.tf" }}
+  ```
+
+  ## What the module does
+
+  1. If you don't provide a **Postgres** database config, it creates a new one for you.
+
+  2. It configures the Keycloak nodes to use the database and to be clustered together.
+
+  3. If you change the number of nodes and re-apply, it will automatically reconfigure the cluster for you.
+
+  ## Examples
+
+  - [Get started](https://github.com/elestio-examples/terraform-elestio-keycloak-cluster/tree/main/examples/get_started) - Ready-to-deploy example which creates a Keycloak Cluster and a Load Balancer.
+
+  ## How to access the Keycloak nodes
+
+  Use `terraform output keycloak_admin` command to output keycloak admin secrets:
+
+  ```bash
+  {{ include "examples/doc/readme_output.sh" }}
+  ```
+
+  Each node is exposed on a different CNAME and IP address.
+  If you need to expose the Keycloak nodes on the same IP address, you will need to create separatly a load balancer.
+  Check the [ready-to-deploy example](https://github.com/elestio-examples/terraform-elestio-keycloak-cluster/tree/main/examples/get_started) for a full usage example.
+
+  ## Scale the nodes
+
+  To adjust the cluster size:
+
+  - Adding nodes: Run `terraform apply` after adding a new node, and it will be seamlessly integrated into the cluster.
+  - Removing nodes: The excess nodes will cleanly leave the cluster on the next `terraform apply`.
+
+  Please note that changing the node count requires to change the .env of existing nodes. This is done automatically by the module.
+
   {{ .Footer }}
   {{ .Inputs }}
   {{ .Modules }}
