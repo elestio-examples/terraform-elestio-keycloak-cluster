@@ -49,11 +49,11 @@ Some knowledge of [terraform](https://developer.hashicorp.com/terraform/intro) i
 Your database will contain a table named `jgroupsping` with a record for each node of your cluster.
 You can also check the logs of each node on the [Elestio dashboard](https://dash.elest.io/). You should see something like this:
 
-// TODO: add screenshot
+![logs screen capture](../doc/logs.png)
 
 ## How to use the cluster
 
-Use the `terraform show` command to retrieve your load balancer IP address or CNAME.
+Use the `terraform state show 'elestio_load_balancer.load_balancer'` command to retrieve your load balancer IP address or CNAME.
 It will dispatch all your requests to the different nodes of your cluster.
 
 ## Scale the nodes

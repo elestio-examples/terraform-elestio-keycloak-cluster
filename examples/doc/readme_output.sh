@@ -1,13 +1,13 @@
 # keycloak_admin
 {
-  "keycloak-germany": {
-    "url": "https://keycloak-germany-u525.vm.elestio.app/auth",
-    "user": "root",
-    "password": "****",
-  },
-  "keycloak-finlande": {
-    "url": "https://keycloak-finlande-u525.vm.elestio.app/auth",
-    "user": "root",
-    "password": "****",
-  },
+  "keycloak-finlande" = {
+    "password" = "*****"
+    "url" = "https://keycloak-finlande-u525.vm.elestio.app:443/"
+    "user" = "root"
+  }
+  "keycloak-germany" = {
+    "password" = "*****"
+    "url" = "https://keycloak-germany-u525.vm.elestio.app:443/"
+    "user" = "root"
+  }
 }
