@@ -18,8 +18,8 @@ resource "elestio_project" "project" {
 }
 
 module "keycloak_cluster" {
-  # source = "elestio-examples/keycloak-cluster/elestio"
-  source = "../.." # Use this line to test the module locally
+  source = "elestio-examples/keycloak-cluster/elestio"
+  # source = "../.." # Use this line to test the module locally
 
   project_id = elestio_project.project.id
   postgresql = null
