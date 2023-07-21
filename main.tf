@@ -7,7 +7,6 @@ resource "elestio_postgresql" "database" {
   datacenter    = var.nodes[0].datacenter
   server_type   = var.nodes[0].server_type
   support_level = var.nodes[0].support_level
-  admin_email   = var.nodes[0].admin_email
   ssh_keys = [{
     key_name   = var.ssh_key.key_name
     public_key = var.ssh_key.public_key

@@ -26,7 +26,7 @@ variable "nodes" {
       datacenter    = string
       server_type   = string
       support_level = optional(string, "level1")
-      admin_email   = string
+      admin_email   = optional(string)
       ssh_keys = optional(list(
         object({
           key_name   = string

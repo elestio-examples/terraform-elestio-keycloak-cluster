@@ -44,14 +44,12 @@ module "keycloak_cluster" {
       provider_name = "hetzner"
       datacenter    = "fsn1"
       server_type   = "SMALL-1C-2G"
-      admin_email   = var.elestio_email
     },
     {
       server_name   = "keycloak-finlande"
       provider_name = "hetzner"
       datacenter    = "hel1"
       server_type   = "SMALL-1C-2G"
-      admin_email   = var.elestio_email
     },
     # You can add more nodes here, but you need to have enough resources quota
     # You can see and udpdate your resources quota on https://dash.elest.io/account/add-quota
