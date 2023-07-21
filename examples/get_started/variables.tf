@@ -19,22 +19,21 @@ variable "keycloak_password" {
   EOF
 }
 
-locals {
-  # Use locals if you key is in a file
-  ssh_key = {
-    key_name    = "admin"
-    public_key  = file("~/.ssh/id_rsa.pub")
-    private_key = file("~/.ssh/id_rsa")
-  }
+variable "ssh_key_name" {
+  type        = string
+  nullable    = false
+  description = "Name of the SSH key"
 }
 
-# Use variables if you want to pass the key as strings in secrets.tfvars
-# variable "ssh_key" {
-#   type = object({
-#     key_name    = string
-#     public_key  = string
-#     private_key = string
-#   })
-#   nullable  = false
-#   sensitive = true
-# }
+variable "ssh_public_key" {
+  type        = string
+  nullable    = false
+  description = "Public key of the SSH key"
+}
+
+variable "ssh_private_key" {
+  type        = string
+  nullable    = false
+  sensitive   = true
+  description = "Private key of the SSH key"
+}

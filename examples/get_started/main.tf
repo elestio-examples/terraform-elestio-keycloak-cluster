@@ -34,9 +34,9 @@ module "keycloak_cluster" {
   # }
   keycloak_admin_password = var.keycloak_password
   ssh_key = {
-    key_name    = "admin"
-    public_key  = file("~/.ssh/id_rsa.pub")
-    private_key = file("~/.ssh/id_rsa")
+    key_name    = var.ssh_key_name
+    public_key  = var.ssh_public_key
+    private_key = var.ssh_private_key
   }
   nodes = [
     {
