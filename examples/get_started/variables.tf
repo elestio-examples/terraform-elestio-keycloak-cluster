@@ -14,8 +14,9 @@ variable "keycloak_password" {
   nullable    = false
   sensitive   = true
   description = <<-EOF
-    Password of the admin user created when keycloak starts.
-    This password will be used to connect to the keycloak admin console.
+    Password of the adminUser created when keycloak starts.
+    The password can only contain alphanumeric characters or hyphens `-`.
+    Require at least 10 characters, one uppercase letter, one lowercase letter and one number.
   EOF
 }
 
