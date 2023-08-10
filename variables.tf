@@ -39,7 +39,7 @@ variable "nodes" {
   description = <<-EOF
     - `server_name`: Each resource must have a unique name within the project.
 
-    - `provider_name`, `datacenter`, `server_type`: [documentation](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/3_providers_datacenters_server_types).
+    - `provider_name`, `datacenter`, `server_type`: [documentation](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/providers_datacenters_server_types).
 
     - `support_level`: `level1`, `level2` or `level3` [documentation](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/keycloak#support_level).
 
