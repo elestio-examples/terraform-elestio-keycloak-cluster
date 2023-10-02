@@ -7,7 +7,7 @@ variable "elestio_api_token" {
   sensitive = true
 }
 
-variable "keycloak_password" {
+variable "keycloak_pass" {
   type      = string
   sensitive = true
 }

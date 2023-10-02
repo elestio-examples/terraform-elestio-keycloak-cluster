@@ -12,33 +12,34 @@ variable "keycloak_version" {
   EOF
 }
 
-variable "keycloak_admin_password" {
+variable "keycloak_pass" {
   type        = string
   sensitive   = true
   description = <<-EOF
-    Password of the adminUser created when keycloak starts.
     The password can only contain alphanumeric characters or hyphens `-`.
     Require at least 10 characters, one uppercase letter, one lowercase letter and one number.
+    Example: `qfeE42snU-bt0y-1KwbwZDq` DO NOT USE **THIS** EXAMPLE PASSWORD.
   EOF
+
   validation {
-    condition     = length(var.keycloak_admin_password) >= 10
-    error_message = "The password must be at least 10 characters long."
+    condition     = length(var.keycloak_pass) >= 10
+    error_message = "keycloak_pass must be at least 10 characters long."
   }
   validation {
-    condition     = can(regex("^[a-zA-Z0-9-]+$", var.keycloak_admin_password))
-    error_message = "The password can only contain alphanumeric characters or hyphens `-`."
+    condition     = can(regex("^[a-zA-Z0-9-]+$", var.keycloak_pass))
+    error_message = "keycloak_pass can only contain alphanumeric characters or hyphens `-`."
   }
   validation {
-    condition     = can(regex("[A-Z]", var.keycloak_admin_password))
-    error_message = "The password must contain at least one uppercase letter."
+    condition     = can(regex("[A-Z]", var.keycloak_pass))
+    error_message = "keycloak_pass must contain at least one uppercase letter."
   }
   validation {
-    condition     = can(regex("[a-z]", var.keycloak_admin_password))
-    error_message = "The password must contain at least one lowercase letter."
+    condition     = can(regex("[a-z]", var.keycloak_pass))
+    error_message = "keycloak_pass must contain at least one lowercase letter."
   }
   validation {
-    condition     = can(regex("[0-9]", var.keycloak_admin_password))
-    error_message = "The password must contain at least one number."
+    condition     = can(regex("[0-9]", var.keycloak_pass))
+    error_message = "keycloak_pass must contain at least one number."
   }
 }
 
@@ -107,80 +108,39 @@ variable "nodes" {
   }
 }
 
-variable "postgresql" {
-  type = object({
-    create = optional(object({
-      provider_name                                     = string
-      datacenter                                        = string
-      server_type                                       = string
-      server_name                                       = optional(string)
-      version                                           = optional(string)
-      database_name                                     = optional(string, "keycloak")
-      default_password                                  = optional(string)
-      admin_email                                       = optional(string)
-      alerts_enabled                                    = optional(bool)
-      app_auto_update_enabled                           = optional(bool)
-      backups_enabled                                   = optional(bool)
-      firewall_enabled                                  = optional(bool)
-      keep_backups_on_delete_enabled                    = optional(bool)
-      remote_backups_enabled                            = optional(bool)
-      support_level                                     = optional(string)
-      system_auto_updates_security_patches_only_enabled = optional(bool)
-      ssh_public_keys = optional(list(
-        object({
-          username = string
-          key_data = string
-        })
-      ), [])
-    }))
-    use = optional(object({
-      host          = string
-      port          = optional(string, "5432")
-      database_name = string
-      schema        = optional(string, "public")
-      username      = string
-      password      = string
-    }))
-  })
-  description = <<-EOF
-    Keycloak requires a PostgreSQL database to store its data.
-    You can create one using the `create` attribute.
-    If you already have one, you can fill the `use` attribute with its configuration.
-    Read the following documentation to understand what each attribute does, plus the default values: [Elestio PostgreSQL Resource](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/postgresql).
-  EOF
+variable "database" {
+  type        = string
+  default     = "postgres"
+  description = "Allowed values are `postgres`, `cockroach`, `mariadb`, `mysql`, `oracle`, or `mssql`."
   validation {
-    error_message = "You must provide either the create or use attribute."
-    condition = anytrue([
-      var.postgresql.create != null && var.postgresql.use == null,
-      var.postgresql.create == null && var.postgresql.use != null,
-    ])
+    condition     = contains(["postgres", "cockroach", "mariadb", "mysql", "oracle", "mssql"], var.database)
+    error_message = "Allowed values for db are \"postgres\", \"cockroach\", \"mariadb\", \"mysql\", \"oracle\", or \"mssql\"."
   }
 }
 
-variable "load_balancer" {
-  type = object({
-    provider_name = string
-    datacenter    = string
-    server_type   = string
-    server_name   = optional(string)
-    config = optional(object({
-      access_logs_enabled      = optional(bool)
-      ip_rate_limit_enabled    = optional(bool)
-      ip_rate_limit_per_second = optional(number)
-      output_cache_in_seconds  = optional(number)
-      output_headers = optional(set(object({
-        key   = string
-        value = string
-      })))
-      proxy_protocol_enabled  = optional(bool)
-      remove_response_headers = optional(set(string))
-      sticky_sessions_enabled = optional(bool)
-    }))
-  })
-  nullable    = true
-  default     = null
-  description = <<-EOF
-    It will create a load balancer in front of the cluster.
-    Read the following documentation to understand what each attribute does, plus the default values: [Elestio Load Balancer Resource](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/load_balancer).
-  EOF
+variable "database_host" {
+  type = string
+}
+
+variable "database_port" {
+  type    = string
+  default = "5432"
+}
+
+variable "database_name" {
+  type    = string
+  default = "postgres"
+}
+
+variable "database_schema" {
+  type    = string
+  default = "public"
+}
+
+variable "database_user" {
+  type = string
+}
+
+variable "database_pass" {
+  type = string
 }
