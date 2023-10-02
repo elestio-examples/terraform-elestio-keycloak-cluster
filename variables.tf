@@ -56,13 +56,12 @@ variable "configuration_ssh_key" {
     This configuration is done using SSH from your local machine.
     The Public Key will be added to the nodes and the Private Key will be used by your local machine to connect to the nodes.
 
-    Read the guide [\"How generate a valid SSH Key for Elestio\"](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/ssh_keys).
-    Example:
+    Read the guide [\"How generate a valid SSH Key for Elestio\"](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/ssh_keys). Example:
     ```
     configuration_ssh_key = {
       username = "admin"
-      public_key = chomp(file("~/.ssh/id_rsa.pub"))
-      private_key = file("~/.ssh/id_rsa")
+      public_key = chomp(file("\~/.ssh/id_rsa.pub"))
+      private_key = file("\~/.ssh/id_rsa")
     }
     ```
   EOF
