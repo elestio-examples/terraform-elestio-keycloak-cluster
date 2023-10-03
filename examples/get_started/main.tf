@@ -23,7 +23,7 @@ resource "elestio_postgresql" "database" {
 }
 
 module "cluster" {
-  source = "../.."
+  source = "elestio-examples/keycloak-cluster/elestio"
 
   project_id       = elestio_project.project.id
   keycloak_version = null # null means latest version

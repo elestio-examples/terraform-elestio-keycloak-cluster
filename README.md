@@ -6,7 +6,7 @@
 A Keycloak cluster can handle more users without slowing down or crashing, and provides fault tolerance to ensure that the system remains operational.
 It also allows for easy scalability to meet changing demands without replacing the entire system.
 
-## Module requirements:
+## Module requirements
 
 - 1 Elestio account https://dash.elest.io/signup
 - 1 API key https://dash.elest.io/account/security
