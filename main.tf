@@ -1,63 +1,43 @@
-resource "elestio_postgresql" "database" {
-  count = var.postgresql != null ? 0 : 1
-
-  project_id    = var.project_id
-  server_name   = "postgres-keycloak"
-  provider_name = var.nodes[0].provider_name
-  datacenter    = var.nodes[0].datacenter
-  server_type   = var.nodes[0].server_type
-  support_level = var.nodes[0].support_level
-  ssh_keys = [{
-    key_name   = var.ssh_key.key_name
-    public_key = var.ssh_key.public_key
-  }]
-
-  connection {
-    type        = "ssh"
-    host        = self.ipv4
-    private_key = var.ssh_key.private_key
-  }
-
-  # Connect to the service to create the specific database for keycloak.
-  provisioner "remote-exec" {
-    inline = [
-      "cd /opt/app",
-      "docker exec -it postgres psql -U ${self.database_admin.user} -c 'CREATE DATABASE keycloak;'"
-    ]
-  }
-}
-
 resource "elestio_keycloak" "nodes" {
   for_each = { for value in var.nodes : value.server_name => value }
 
   project_id       = var.project_id
   version          = var.keycloak_version
+  default_password = var.keycloak_pass
   server_name      = each.value.server_name
-  default_password = var.keycloak_admin_password
   provider_name    = each.value.provider_name
   datacenter       = each.value.datacenter
   server_type      = each.value.server_type
-  support_level    = each.value.support_level
-  admin_email      = each.value.admin_email
-  ssh_keys         = concat(each.value.ssh_keys, [var.ssh_key])
+  // Merge the module configuration_ssh_key with the optional ssh_public_keys attribute
+  ssh_public_keys = concat(each.value.ssh_public_keys, [{
+    username = var.configuration_ssh_key.username
+    key_data = var.configuration_ssh_key.public_key
+  }])
+
+  // Optional attributes
+  admin_email                                       = each.value.admin_email
+  alerts_enabled                                    = each.value.alerts_enabled
+  app_auto_updates_enabled                          = each.value.app_auto_update_enabled
+  backups_enabled                                   = each.value.backups_enabled
+  custom_domain_names                               = each.value.custom_domain_names
+  firewall_enabled                                  = each.value.firewall_enabled
+  keep_backups_on_delete_enabled                    = each.value.keep_backups_on_delete_enabled
+  remote_backups_enabled                            = each.value.remote_backups_enabled
+  support_level                                     = each.value.support_level
+  system_auto_updates_security_patches_only_enabled = each.value.system_auto_updates_security_patches_only_enabled
 
   connection {
     type        = "ssh"
     host        = self.ipv4
-    private_key = var.ssh_key.private_key
+    private_key = var.configuration_ssh_key.private_key
   }
 
   provisioner "remote-exec" {
     inline = [
       "cd /opt/app",
       "docker-compose down",
-      "rm -rf postgresql_data"
+      "rm -rf postgres_data postgresql_data docker-compose.yml docker-compose.yaml",
     ]
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/resources/docker-compose.yml"
-    destination = "/opt/app/docker-compose.yml"
   }
 }
 
@@ -74,23 +54,34 @@ resource "null_resource" "update_nodes_env" {
   connection {
     type        = "ssh"
     host        = each.value.ipv4
-    private_key = var.ssh_key.private_key
+    private_key = var.configuration_ssh_key.private_key
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/resources/docker-compose.yml"
+    destination = "/opt/app/docker-compose.yml"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/resources/cache-ispn-jdbc-ping.xml"
+    destination = "/opt/app/cache-ispn-jdbc-ping.xml"
   }
 
   provisioner "file" {
     content = templatefile("${path.module}/resources/.env.tftpl", {
-      software_password       = each.value.admin.password
-      software_version        = each.value.version
-      postgresql_host         = var.postgresql != null ? var.postgresql.host : elestio_postgresql.database[0].cname
-      postgresql_port         = var.postgresql != null ? var.postgresql.port : elestio_postgresql.database[0].database_admin.port
-      postgresql_database     = var.postgresql != null ? var.postgresql.database : "keycloak"
-      postgresql_schema       = var.postgresql != null ? var.postgresql.schema : "public"
-      postgresql_username     = var.postgresql != null ? var.postgresql.username : elestio_postgresql.database[0].database_admin.user
-      postgresql_password     = var.postgresql != null ? var.postgresql.password : elestio_postgresql.database[0].database_admin.password
-      keycloak_admin_user     = "root"
-      keycloak_admin_password = var.keycloak_admin_password
-      node_ipv4               = each.value.ipv4
-      nodes_count             = length(elestio_keycloak.nodes)
+      software_password = each.value.admin.password
+      software_version  = each.value.version
+      nodes_count       = length(elestio_keycloak.nodes)
+      global_ip         = each.value.global_ip
+      keycloak_user     = "root"
+      keycloak_pass     = var.keycloak_pass
+      database          = var.database
+      database_host     = var.database_host
+      database_port     = var.database_port
+      database_name     = var.database_name
+      database_schema   = var.database_schema
+      database_user     = var.database_user
+      database_pass     = var.database_pass
     })
     destination = "/opt/app/.env"
   }
@@ -99,6 +90,7 @@ resource "null_resource" "update_nodes_env" {
     inline = [
       "cd /opt/app",
       "docker-compose up -d",
+      "sleep 15" // Wait for keycloak to be up
     ]
   }
 }

@@ -34,27 +34,16 @@ Some knowledge of [terraform](https://developer.hashicorp.com/terraform/intro) i
    It will:
 
    - Create a new project in your Elestio account
-   - Setup a Postgresql database to store the Keycloak data
+   - Create a postgreSQL database
    - Build a Keycloak cluster with the number of nodes you specified
-   - Use a load balancer to distribute the traffic on a single IP address
+   - Create a load balancer to distribute the traffic on a single IP address
 
-3. You can use the `terraform output` command to print the output block of your main.tf file:
+3. You can use the `terraform output` command to print the outputs block of your main.tf file:
 
    ```bash
-   terraform output keycloak_admin # Keycloak Admin secrets
+   $ terraform output nodes_admins
+   $ terraform output load_balancer_cname
    ```
-
-## Testing
-
-Your database will contain a table named `jgroupsping` with a record for each node of your cluster.
-You can also check the logs of each node on the [Elestio dashboard](https://dash.elest.io/). You should see something like this:
-
-![logs screen capture](../doc/logs.png)
-
-## How to use the cluster
-
-Use the `terraform state show 'elestio_load_balancer.load_balancer'` command to retrieve your load balancer IP address or CNAME.
-It will dispatch all your requests to the different nodes of your cluster.
 
 ## Scale the nodes
 

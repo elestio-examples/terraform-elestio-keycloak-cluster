@@ -20,48 +20,86 @@ content: |-
 
   A Keycloak cluster can handle more users without slowing down or crashing, and provides fault tolerance to ensure that the system remains operational.
   It also allows for easy scalability to meet changing demands without replacing the entire system.
-
   {{ .Header }}
+  ## Module requirements
 
-  ## Usage
+  - 1 Elestio account https://dash.elest.io/signup
+  - 1 API key https://dash.elest.io/account/security
+  - 1 Database to store the data
+  - 1 SSH public/private key (see how to create one [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/ssh_keys))
+
+  ## Module usage
+
+  This is a minimal example of how to use the module:
 
   ```hcl
-  {{ include "examples/doc/main.tf" }}
+  {{ include "examples/doc/usage.tf" }}
   ```
 
-  ## What the module does
+  Keep your keycloak password safe, you will need it to access the admin panel.
 
-  1. If you don't provide a **Postgres** database config, it creates a new one for you.
+  If you want to know more about node configuration, check the keycloak service documentation [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/keycloak).
 
-  2. It configures the Keycloak nodes to use the database and to be clustered together.
+  If you want to choose your own provider, datacenter or server type, check the guide [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/providers_datacenters_server_types).
 
-  3. If you change the number of nodes and re-apply, it will automatically reconfigure the cluster for you.
+  If you want to generated a valid SSH Key, check the guide [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/ssh_keys).
 
-  ## Examples
+  If you add more nodes, you may attains the resources limit of your account, please visit your account [quota page](https://dash.elest.io/account/add-quota).
 
-  - [Get started](https://github.com/elestio-examples/terraform-elestio-keycloak-cluster/tree/main/examples/get_started) - Ready-to-deploy example which creates a Keycloak Cluster and a Load Balancer.
+  ## Quick configuration
 
-  ## How to access the Keycloak nodes
+  The following example will create a Keycloak cluster with 2 nodes, a database and a load balancer.
 
-  Use `terraform output keycloak_admin` command to output keycloak admin secrets:
+  You may need to adjust the configuration to fit your needs.
+
+  Create a `main.tf` file at the root of your project, and fill it with your Elestio credentials:
+
+  ```hcl
+  {{ include "examples/doc/init.tf" }}
+  ```
+
+  Keycloak requires a database to store its data. To create one, add the following code to the file:
+
+  ```hcl
+  {{ include "examples/doc/database.tf" }}
+  ```
+
+  Now you can use the module to create keycloak nodes:
+
+  ```hcl
+  {{ include "examples/doc/module.tf" }}
+  ```
+
+  Each node is exposed on a different CNAME and IP address. You can add a load balancer to distribute the traffic between the nodes:
+
+  ```hcl
+  {{ include "examples/doc/load_balancer.tf" }}
+  ```
+
+  Finally, let's add some outputs to retrieve useful information:
+
+  ```hcl
+  {{ include "examples/doc/outputs.tf" }}
+  ```
+
+  You can now run `terraform init` and `terraform apply` to create your Keycloak cluster.
+  After a few minutes, the cluster will be ready to use.
+  You can access your outputs with `terraform output`:
 
   ```bash
-  {{ include "examples/doc/readme_output.sh" }}
+  $ terraform output nodes_admins
+  $ terraform output load_balancer_cname
   ```
 
-  Each node is exposed on a different CNAME and IP address.
-  If you need to expose the Keycloak nodes on the same IP address, you will need to create separatly a load balancer.
-  Check the [ready-to-deploy example](https://github.com/elestio-examples/terraform-elestio-keycloak-cluster/tree/main/examples/get_started) for a full usage example.
-
-  ## Scale the nodes
-
-  To adjust the cluster size:
-
-  - Adding nodes: Run `terraform apply` after adding a new node, and it will be seamlessly integrated into the cluster.
-  - Removing nodes: The excess nodes will cleanly leave the cluster on the next `terraform apply`.
-
+  If you want to update some parameters, you can edit the `main.tf` file and run `terraform apply` again.
+  Terraform will automatically update the cluster to match the new configuration.
   Please note that changing the node count requires to change the .env of existing nodes. This is done automatically by the module.
 
+  ## Ready-to-deploy example
+
+  We created a ready-to-deploy example which creates the same infrastructure as the previous example.
+  You can find it [here](https://github.com/elestio-examples/terraform-elestio-keycloak-cluster/tree/main/examples/get_started).
+  Follow the instructions to deploy the example.
   {{ .Footer }}
   {{ .Inputs }}
   {{ .Modules }}
