@@ -52,19 +52,29 @@ content: |-
 
   You may need to adjust the configuration to fit your needs.
 
-  Create a `main.tf` file at the root of your project, and fill it with your Elestio credentials:
+
+  Some secrets are required to create the cluster. For security reasons, we recommend to store them in a `.tfvars` file and add it to your `.gitignore` file.
+  Create a `terraform.tfvars` file at the root of your project, and fill it with your Elestio credentials:
+
+  ```hcl
+  {{ include "examples/doc/terraform.tfvars" }}
+  ```
+
+  Create a `main.tf` file at the root of your project, and fill it with the following code:
 
   ```hcl
   {{ include "examples/doc/init.tf" }}
   ```
 
-  Keycloak requires a database to store its data. To create one, add the following code to the file:
+  Notice that we had to define a variable block for each secrets stored in the `terraform.tfvars` file.
+
+  Keycloak requires a database to store its data. To create one, add the following code to the `main.tf` file:
 
   ```hcl
   {{ include "examples/doc/database.tf" }}
   ```
 
-  Now you can use the module to create keycloak nodes:
+  Now you can use the module to create keycloak nodes.
 
   ```hcl
   {{ include "examples/doc/module.tf" }}

@@ -1,3 +1,5 @@
+# ...main.tf
+
 resource "elestio_postgresql" "database" {
   project_id    = elestio_project.project.id
   provider_name = "scaleway"
