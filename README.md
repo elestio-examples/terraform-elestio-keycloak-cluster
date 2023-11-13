@@ -71,9 +71,42 @@ The following example will create a Keycloak cluster with 2 nodes, a database an
 
 You may need to adjust the configuration to fit your needs.
 
-Create a `main.tf` file at the root of your project, and fill it with your Elestio credentials:
+
+Some secrets are required to create the cluster. For security reasons, we recommend to store them in a `.tfvars` file and add it to your `.gitignore` file.
+Create a `terraform.tfvars` file at the root of your project, and fill it with your Elestio credentials:
 
 ```hcl
+# terraform.tfvars (should be ignored in a .gitignore)
+
+elestio_email = ""
+
+elestio_api_token = ""
+# Generate your API token here: https://dash.elest.io/account/security
+
+keycloak_pass = ""
+# Generate a random valid password: https://api.elest.io/api/auth/passwordgenerator
+# Require at least 10 characters, one uppercase letter, one lowercase letter and one number
+```
+
+Create a `main.tf` file at the root of your project, and fill it with the following code:
+
+```hcl
+# main.tf
+
+variable "elestio_email" {
+  type = string
+}
+
+variable "elestio_api_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "keycloak_pass" {
+  type      = string
+  sensitive = true
+}
+
 terraform {
   required_providers {
     elestio = {
@@ -83,8 +116,8 @@ terraform {
 }
 
 provider "elestio" {
-  email     = "xxxx@xxxx.xxx"
-  api_token = "xxxxxxxxxxxxx"
+  email     = var.elestio_email
+  api_token = var.elestio_api_token
 }
 
 resource "elestio_project" "project" {
@@ -92,9 +125,13 @@ resource "elestio_project" "project" {
 }
 ```
 
-Keycloak requires a database to store its data. To create one, add the following code to the file:
+Notice that we had to define a variable block for each secrets stored in the `terraform.tfvars` file.
+
+Keycloak requires a database to store its data. To create one, add the following code to the `main.tf` file:
 
 ```hcl
+# ...main.tf
+
 resource "elestio_postgresql" "database" {
   project_id    = elestio_project.project.id
   provider_name = "scaleway"
@@ -103,15 +140,17 @@ resource "elestio_postgresql" "database" {
 }
 ```
 
-Now you can use the module to create keycloak nodes:
+Now you can use the module to create keycloak nodes.
 
 ```hcl
+# ...main.tf
+
 module "cluster" {
   source = "elestio-examples/keycloak-cluster/elestio"
 
   project_id       = elestio_project.project.id
   keycloak_version = null # null means latest version
-  keycloak_pass    = "xxxxxxxxxxxxx"
+  keycloak_pass    = var.keycloak_pass
 
   database        = "postgres"
   database_host   = elestio_postgresql.database.cname
@@ -147,6 +186,8 @@ module "cluster" {
 Each node is exposed on a different CNAME and IP address. You can add a load balancer to distribute the traffic between the nodes:
 
 ```hcl
+# ...main.tf
+
 resource "elestio_load_balancer" "load_balancer" {
   project_id    = elestio_project.project.id
   provider_name = "scaleway"
@@ -169,6 +210,8 @@ resource "elestio_load_balancer" "load_balancer" {
 Finally, let's add some outputs to retrieve useful information:
 
 ```hcl
+# ...main.tf
+
 output "nodes_admins" {
   value     = { for node in module.cluster.nodes : node.server_name => node.admin }
   sensitive = true
@@ -226,19 +269,19 @@ No modules.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_elestio"></a> [elestio](#provider\_elestio) | = 0.12.0 |
+| <a name="provider_elestio"></a> [elestio](#provider\_elestio) | = 0.13.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | = 3.2.0 |
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
-| <a name="requirement_elestio"></a> [elestio](#requirement\_elestio) | = 0.12.0 |
+| <a name="requirement_elestio"></a> [elestio](#requirement\_elestio) | = 0.13.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | = 3.2.0 |
 ## Resources
 
 | Name | Type |
 |------|------|
-| [elestio_keycloak.nodes](https://registry.terraform.io/providers/elestio/elestio/0.12.0/docs/resources/keycloak) | resource |
+| [elestio_keycloak.nodes](https://registry.terraform.io/providers/elestio/elestio/0.13.0/docs/resources/keycloak) | resource |
 | [null_resource.update_nodes_env](https://registry.terraform.io/providers/hashicorp/null/3.2.0/docs/resources/resource) | resource |
 <!-- END_TF_DOCS -->

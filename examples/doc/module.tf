@@ -1,9 +1,11 @@
+# ...main.tf
+
 module "cluster" {
   source = "elestio-examples/keycloak-cluster/elestio"
 
   project_id       = elestio_project.project.id
   keycloak_version = null # null means latest version
-  keycloak_pass    = "xxxxxxxxxxxxx"
+  keycloak_pass    = var.keycloak_pass
 
   database        = "postgres"
   database_host   = elestio_postgresql.database.cname

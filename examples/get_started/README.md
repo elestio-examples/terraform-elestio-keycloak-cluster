@@ -17,7 +17,7 @@ Some knowledge of [terraform](https://developer.hashicorp.com/terraform/intro) i
 
 ## Instructions
 
-1. Rename `secrets.tfvars.example` to `secrets.tfvars` and fill in the values.
+1. Rename `terraform.tfvars.example` to `terraform.tfvars` and fill in the values.
 
    This file contains the sensitive values to be passed as variables to Terraform.</br>
    You should **never commit this file** with git.
@@ -26,8 +26,8 @@ Some knowledge of [terraform](https://developer.hashicorp.com/terraform/intro) i
 
    ```bash
    terraform init
-   terraform plan -var-file="secrets.tfvars" # to preview changes
-   terraform apply -var-file="secrets.tfvars"
+   terraform plan # to preview changes
+   terraform apply
    terraform show
    ```
 

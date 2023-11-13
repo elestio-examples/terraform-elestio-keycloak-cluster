@@ -1,0 +1,12 @@
+# Rename this file to `terraform.tfvars` before fill in the values
+# This file should be ignored in the .gitignore
+# Do not commit it with the plain values
+
+elestio_email = ""
+
+# Generate your API token here: https://dash.elest.io/account/security
+elestio_api_token = ""
+
+# Generate a random valid password: https://api.elest.io/api/auth/passwordgenerator
+# Require at least 10 characters, one uppercase letter, one lowercase letter and one number
+keycloak_pass = ""

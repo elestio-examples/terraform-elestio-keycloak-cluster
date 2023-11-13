@@ -1,3 +1,19 @@
+# main.tf
+
+variable "elestio_email" {
+  type = string
+}
+
+variable "elestio_api_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "keycloak_pass" {
+  type      = string
+  sensitive = true
+}
+
 terraform {
   required_providers {
     elestio = {
@@ -7,8 +23,8 @@ terraform {
 }
 
 provider "elestio" {
-  email     = "xxxx@xxxx.xxx"
-  api_token = "xxxxxxxxxxxxx"
+  email     = var.elestio_email
+  api_token = var.elestio_api_token
 }
 
 resource "elestio_project" "project" {

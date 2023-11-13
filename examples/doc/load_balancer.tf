@@ -1,3 +1,5 @@
+# ...main.tf
+
 resource "elestio_load_balancer" "load_balancer" {
   project_id    = elestio_project.project.id
   provider_name = "scaleway"
