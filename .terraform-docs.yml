@@ -1,4 +1,4 @@
-formatter: '' # this is required
+formatter: 'markdown' # this is required
 
 version: ''
 
@@ -20,13 +20,8 @@ content: |-
 
   A Keycloak cluster can handle more users without slowing down or crashing, and provides fault tolerance to ensure that the system remains operational.
   It also allows for easy scalability to meet changing demands without replacing the entire system.
-  {{ .Header }}
-  ## Module requirements
 
-  - 1 Elestio account https://dash.elest.io/signup
-  - 1 API key https://dash.elest.io/account/security
-  - 1 Database to store the data
-  - 1 SSH public/private key (see how to create one [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/ssh_keys))
+  {{ .Header }}
 
   ## Module usage
 
@@ -36,7 +31,7 @@ content: |-
   {{ include "examples/doc/usage.tf" }}
   ```
 
-  Keep your keycloak password safe, you will need it to access the admin panel.
+   Keep your keycloak password safe, you will need it to access the admin panel.
 
   If you want to know more about node configuration, check the keycloak service documentation [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/keycloak).
 
@@ -46,57 +41,72 @@ content: |-
 
   If you add more nodes, you may attains the resources limit of your account, please visit your account [quota page](https://dash.elest.io/account/add-quota).
 
-  ## Quick configuration
+  ## Step-by-step 
 
   The following example will create a Keycloak cluster with 2 nodes, a database and a load balancer.
-
   You may need to adjust the configuration to fit your needs.
 
+  ### 1. Store your secrets
 
-  Some secrets are required to create the cluster. For security reasons, we recommend to store them in a `.tfvars` file and add it to your `.gitignore` file.
-  Create a `terraform.tfvars` file at the root of your project, and fill it with your Elestio credentials:
+  Some secrets are required to create the cluster.
+  For security reasons, we recommend to store them in a `.tfvars` file and add it to your `.gitignore` file.
+  Create a `terraform.tfvars` file:
 
   ```hcl
   {{ include "examples/doc/terraform.tfvars" }}
   ```
 
-  Create a `main.tf` file at the root of your project, and fill it with the following code:
+  Terraform needs a ssh key to connect to the nodes and configure them. 
+  If you don't have one, you can create it with the following command:
+
+  ```bash
+  ssh-keygen -t rsa
+  ```
+
+  Remember the path and name, we will need it later.
+
+  ### 2. Write the configuration
+
+  Create a `main.tf` file:
 
   ```hcl
   {{ include "examples/doc/init.tf" }}
   ```
 
-  Notice that we had to define a variable block for each secrets stored in the `terraform.tfvars` file.
-
-  Keycloak requires a database to store its data. To create one, add the following code to the `main.tf` file:
+  Add a database:
 
   ```hcl
   {{ include "examples/doc/database.tf" }}
   ```
 
-  Now you can use the module to create keycloak nodes.
+  -> If you want to choose your own provider, datacenter or server type, check the guide [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/providers_datacenters_server_types).
+
+  Add the module:
 
   ```hcl
   {{ include "examples/doc/module.tf" }}
   ```
 
-  Each node is exposed on a different CNAME and IP address. You can add a load balancer to distribute the traffic between the nodes:
+  Add a load balancer:
 
   ```hcl
   {{ include "examples/doc/load_balancer.tf" }}
   ```
 
-  Finally, let's add some outputs to retrieve useful information:
+  Finally, let's add some outputs to retrieve useful information when the cluster is ready:
 
   ```hcl
   {{ include "examples/doc/outputs.tf" }}
   ```
+
+  ### 3. Run the configuration
 
   You can now run `terraform init` and `terraform apply` to create your Keycloak cluster.
   After a few minutes, the cluster will be ready to use.
   You can access your outputs with `terraform output`:
 
   ```bash
+  $ terraform output database_admin
   $ terraform output nodes_admins
   $ terraform output load_balancer_cname
   ```
@@ -110,6 +120,7 @@ content: |-
   We created a ready-to-deploy example which creates the same infrastructure as the previous example.
   You can find it [here](https://github.com/elestio-examples/terraform-elestio-keycloak-cluster/tree/main/examples/get_started).
   Follow the instructions to deploy the example.
+
   {{ .Footer }}
   {{ .Inputs }}
   {{ .Modules }}
@@ -140,7 +151,7 @@ settings:
   default: true
   description: false
   escape: true
-  hide-empty: false
+  hide-empty: true
   html: true
   indent: 2
   lockfile: true

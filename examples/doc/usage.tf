@@ -21,15 +21,15 @@ module "cluster" {
   nodes = [
     {
       server_name   = "keycloak-1"
-      provider_name = "scaleway"
-      datacenter    = "fr-par-1"
-      server_type   = "SMALL-2C-2G"
+      provider_name = "hetzner"
+      datacenter    = "fsn1"
+      server_type   = "SMALL-1C-2G"
     },
     {
       server_name   = "keycloak-2"
-      provider_name = "scaleway"
-      datacenter    = "fr-par-2"
-      server_type   = "SMALL-2C-2G"
+      provider_name = "hetzner"
+      datacenter    = "nbg1"
+      server_type   = "SMALL-1C-2G"
     },
   ]
 }
