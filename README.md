@@ -6,12 +6,7 @@
 A Keycloak cluster can handle more users without slowing down or crashing, and provides fault tolerance to ensure that the system remains operational.
 It also allows for easy scalability to meet changing demands without replacing the entire system.
 
-## Module requirements
 
-- 1 Elestio account https://dash.elest.io/signup
-- 1 API key https://dash.elest.io/account/security
-- 1 Database to store the data
-- 1 SSH public/private key (see how to create one [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/ssh_keys))
 
 ## Module usage
 
@@ -41,15 +36,15 @@ module "cluster" {
   nodes = [
     {
       server_name   = "keycloak-1"
-      provider_name = "scaleway"
-      datacenter    = "fr-par-1"
-      server_type   = "SMALL-2C-2G"
+      provider_name = "hetzner"
+      datacenter    = "fsn1"
+      server_type   = "SMALL-1C-2G"
     },
     {
       server_name   = "keycloak-2"
-      provider_name = "scaleway"
-      datacenter    = "fr-par-2"
-      server_type   = "SMALL-2C-2G"
+      provider_name = "hetzner"
+      datacenter    = "nbg1"
+      server_type   = "SMALL-1C-2G"
     },
   ]
 }
@@ -65,30 +60,36 @@ If you want to generated a valid SSH Key, check the guide [here](https://registr
 
 If you add more nodes, you may attains the resources limit of your account, please visit your account [quota page](https://dash.elest.io/account/add-quota).
 
-## Quick configuration
+## Step-by-step
 
 The following example will create a Keycloak cluster with 2 nodes, a database and a load balancer.
-
 You may need to adjust the configuration to fit your needs.
 
+### 1. Store your secrets
 
-Some secrets are required to create the cluster. For security reasons, we recommend to store them in a `.tfvars` file and add it to your `.gitignore` file.
-Create a `terraform.tfvars` file at the root of your project, and fill it with your Elestio credentials:
+Some secrets are required to create the cluster.
+For security reasons, we recommend to store them in a `.tfvars` file and add it to your `.gitignore` file.
+Create a `terraform.tfvars` file:
 
 ```hcl
-# terraform.tfvars (should be ignored in a .gitignore)
-
-elestio_email = ""
-
-elestio_api_token = ""
-# Generate your API token here: https://dash.elest.io/account/security
-
-keycloak_pass = ""
-# Generate a random valid password: https://api.elest.io/api/auth/passwordgenerator
-# Require at least 10 characters, one uppercase letter, one lowercase letter and one number
+# terraform.tfvars
+elestio_email     = "****" # Create an Elestio account https://dash.elest.io/signup
+elestio_api_token = "****" # Generate an API token https://dash.elest.io/account/security
+keycloak_pass     = "****" # Generated a keycloak password https://api.elest.io/api/auth/passwordgenerator
 ```
 
-Create a `main.tf` file at the root of your project, and fill it with the following code:
+Terraform needs a ssh key to connect to the nodes and configure them.
+If you don't have one, you can create it with the following command:
+
+```bash
+ssh-keygen -t rsa
+```
+
+Remember the path and name, we will need it later.
+
+### 2. Write the configuration
+
+Create a `main.tf` file:
 
 ```hcl
 # main.tf
@@ -125,22 +126,22 @@ resource "elestio_project" "project" {
 }
 ```
 
-Notice that we had to define a variable block for each secrets stored in the `terraform.tfvars` file.
-
-Keycloak requires a database to store its data. To create one, add the following code to the `main.tf` file:
+Add a database:
 
 ```hcl
 # ...main.tf
 
 resource "elestio_postgresql" "database" {
   project_id    = elestio_project.project.id
-  provider_name = "scaleway"
-  datacenter    = "fr-par-1"
-  server_type   = "SMALL-2C-2G"
+  provider_name = "hetzner"
+  datacenter    = "fsn1"
+  server_type   = "SMALL-1C-2G"
 }
 ```
 
-Now you can use the module to create keycloak nodes.
+-> If you want to choose your own provider, datacenter or server type, check the guide [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/providers_datacenters_server_types).
+
+Add the module:
 
 ```hcl
 # ...main.tf
@@ -169,30 +170,30 @@ module "cluster" {
   nodes = [
     {
       server_name   = "keycloak-1"
-      provider_name = "scaleway"
-      datacenter    = "fr-par-1"
-      server_type   = "SMALL-2C-2G"
+      provider_name = "hetzner"
+      datacenter    = "fsn1"
+      server_type   = "SMALL-1C-2G"
     },
     {
       server_name   = "keycloak-2"
-      provider_name = "scaleway"
-      datacenter    = "fr-par-2"
-      server_type   = "SMALL-2C-2G"
+      provider_name = "hetzner"
+      datacenter    = "nbg1"
+      server_type   = "SMALL-1C-2G"
     },
   ]
 }
 ```
 
-Each node is exposed on a different CNAME and IP address. You can add a load balancer to distribute the traffic between the nodes:
+Add a load balancer:
 
 ```hcl
 # ...main.tf
 
 resource "elestio_load_balancer" "load_balancer" {
   project_id    = elestio_project.project.id
-  provider_name = "scaleway"
-  datacenter    = "fr-par-1"
-  server_type   = "SMALL-2C-2G"
+  provider_name = "hetzner"
+  datacenter    = "fsn1"
+  server_type   = "SMALL-1C-2G"
   config = {
     target_services = [for node in module.cluster.nodes : node.id]
     forward_rules = [
@@ -207,10 +208,15 @@ resource "elestio_load_balancer" "load_balancer" {
 }
 ```
 
-Finally, let's add some outputs to retrieve useful information:
+Finally, let's add some outputs to retrieve useful information when the cluster is ready:
 
 ```hcl
 # ...main.tf
+
+output "database_admin" {
+  value     = elestio_postgresql.database.admin
+  sensitive = true
+}
 
 output "nodes_admins" {
   value     = { for node in module.cluster.nodes : node.server_name => node.admin }
@@ -222,11 +228,14 @@ output "load_balancer_cname" {
 }
 ```
 
+### 3. Run the configuration
+
 You can now run `terraform init` and `terraform apply` to create your Keycloak cluster.
 After a few minutes, the cluster will be ready to use.
 You can access your outputs with `terraform output`:
 
 ```bash
+$ terraform output database_admin
 $ terraform output nodes_admins
 $ terraform output load_balancer_cname
 ```
@@ -240,6 +249,7 @@ Please note that changing the node count requires to change the .env of existing
 We created a ready-to-deploy example which creates the same infrastructure as the previous example.
 You can find it [here](https://github.com/elestio-examples/terraform-elestio-keycloak-cluster/tree/main/examples/get_started).
 Follow the instructions to deploy the example.
+
 
 ## Inputs
 
@@ -257,9 +267,7 @@ Follow the instructions to deploy the example.
 | <a name="input_keycloak_version"></a> [keycloak\_version](#input\_keycloak\_version) | The cluster nodes must share the same keycloak version.<br>Leave empty or set to `null` to use the Elestio recommended version. | `string` | `null` | no |
 | <a name="input_nodes"></a> [nodes](#input\_nodes) | Each element of this list will create an Elestio Keycloak Resource in your cluster.<br>Read the following documentation to understand what each attribute does, plus the default values: [Elestio Keycloak Resource](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/keycloak). | <pre>list(<br>    object({<br>      server_name                                       = string<br>      provider_name                                     = string<br>      datacenter                                        = string<br>      server_type                                       = string<br>      admin_email                                       = optional(string)<br>      alerts_enabled                                    = optional(bool)<br>      app_auto_update_enabled                           = optional(bool)<br>      backups_enabled                                   = optional(bool)<br>      custom_domain_names                               = optional(set(string))<br>      firewall_enabled                                  = optional(bool)<br>      keep_backups_on_delete_enabled                    = optional(bool)<br>      remote_backups_enabled                            = optional(bool)<br>      support_level                                     = optional(string)<br>      system_auto_updates_security_patches_only_enabled = optional(bool)<br>      ssh_public_keys = optional(list(<br>        object({<br>          username = string<br>          key_data = string<br>        })<br>      ), [])<br>    })<br>  )</pre> | `[]` | no |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | n/a | `string` | n/a | yes |
-## Modules
 
-No modules.
 ## Outputs
 
 | Name | Description |

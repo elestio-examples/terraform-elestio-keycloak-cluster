@@ -17,9 +17,9 @@ resource "elestio_project" "project" {
 
 resource "elestio_postgresql" "database" {
   project_id    = elestio_project.project.id
-  provider_name = "scaleway"
-  datacenter    = "fr-par-1"
-  server_type   = "SMALL-2C-2G"
+  provider_name = "hetzner"
+  datacenter    = "fsn1"
+  server_type   = "SMALL-1C-2G"
 }
 
 module "cluster" {
@@ -46,24 +46,24 @@ module "cluster" {
   nodes = [
     {
       server_name   = "keycloak-1"
-      provider_name = "scaleway"
-      datacenter    = "fr-par-1"
-      server_type   = "SMALL-2C-2G"
+      provider_name = "hetzner"
+      datacenter    = "fsn1"
+      server_type   = "SMALL-1C-2G"
     },
     {
       server_name   = "keycloak-2"
-      provider_name = "scaleway"
-      datacenter    = "fr-par-2"
-      server_type   = "SMALL-2C-2G"
+      provider_name = "hetzner"
+      datacenter    = "nbg1"
+      server_type   = "SMALL-1C-2G"
     },
   ]
 }
 
 resource "elestio_load_balancer" "load_balancer" {
   project_id    = elestio_project.project.id
-  provider_name = "scaleway"
-  datacenter    = "fr-par-1"
-  server_type   = "SMALL-2C-2G"
+  provider_name = "hetzner"
+  datacenter    = "fsn1"
+  server_type   = "SMALL-1C-2G"
   config = {
     target_services = [for node in module.cluster.nodes : node.id]
     forward_rules = [
@@ -75,6 +75,11 @@ resource "elestio_load_balancer" "load_balancer" {
       },
     ]
   }
+}
+
+output "database_admin" {
+  value     = elestio_postgresql.database.admin
+  sensitive = true
 }
 
 output "nodes_admins" {
