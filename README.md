@@ -126,7 +126,7 @@ resource "elestio_project" "project" {
 }
 ```
 
-Add a database:
+### Add a database:
 
 ```hcl
 # ...main.tf
@@ -141,7 +141,7 @@ resource "elestio_postgresql" "database" {
 
 -> If you want to choose your own provider, datacenter or server type, check the guide [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/providers_datacenters_server_types).
 
-Add the module:
+### Add the module:
 
 ```hcl
 # ...main.tf
@@ -184,7 +184,7 @@ module "cluster" {
 }
 ```
 
-Add a load balancer:
+### Add a load balancer:
 
 ```hcl
 # ...main.tf
