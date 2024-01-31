@@ -73,7 +73,7 @@ content: |-
   {{ include "examples/doc/init.tf" }}
   ```
 
-  Add a database:
+  ### Add a database:
 
   ```hcl
   {{ include "examples/doc/database.tf" }}
@@ -81,13 +81,13 @@ content: |-
 
   -> If you want to choose your own provider, datacenter or server type, check the guide [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/providers_datacenters_server_types).
 
-  Add the module:
+  ### Add the module:
 
   ```hcl
   {{ include "examples/doc/module.tf" }}
   ```
 
-  Add a load balancer:
+  ### Add a load balancer:
 
   ```hcl
   {{ include "examples/doc/load_balancer.tf" }}
