@@ -1,8 +1,9 @@
 module "cluster" {
   source = "elestio-examples/keycloak-cluster/elestio"
 
-  project_id    = "xxxxxx"
-  keycloak_pass = "xxxxxx"
+  project_id       = "xxxxxx"
+  keycloak_version = "latest"
+  keycloak_pass    = "xxxxxx"
 
   database        = "postgres"
   database_host   = "xxxxxx"

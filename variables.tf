@@ -4,21 +4,16 @@ variable "project_id" {
 
 variable "keycloak_version" {
   type        = string
-  nullable    = true
-  default     = null
-  description = <<-EOF
-    The cluster nodes must share the same keycloak version.
-    Leave empty or set to `null` to use the Elestio recommended version.
-  EOF
+  nullable    = false
+  description = "The module uses the Keycloak image from the phasetwo repository. Check the available versions at: https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags"
 }
 
 variable "keycloak_pass" {
   type        = string
   sensitive   = true
   description = <<-EOF
-    The password can only contain alphanumeric characters or hyphens `-`.
-    Require at least 10 characters, one uppercase letter, one lowercase letter and one number.
-    Example: `qfeE42snU-bt0y-1KwbwZDq` DO NOT USE **THIS** EXAMPLE PASSWORD.
+    Rules: Alphanumeric characters or hyphens `-`, +10 characters, +1 digit, +1 uppercase, +1 lowercase.
+    If you need a valid strong password, you can generate one accessing this Elestio URL: https://api.elest.io/api/auth/passwordgenerator
   EOF
 
   validation {

@@ -31,7 +31,10 @@ content: |-
   {{ include "examples/doc/usage.tf" }}
   ```
 
-   Keep your keycloak password safe, you will need it to access the admin panel.
+  The module uses the Keycloak image from the [phasetwo](https://quay.io/repository/phasetwo/phasetwo-keycloak) repository.
+  Check the available versions at: https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
+
+  Keep your keycloak password safe, you will need it to access the admin panel.
 
   If you want to know more about node configuration, check the keycloak service documentation [here](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/keycloak).
 

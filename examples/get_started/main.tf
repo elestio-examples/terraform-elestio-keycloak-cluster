@@ -26,7 +26,7 @@ module "cluster" {
   source = "elestio-examples/keycloak-cluster/elestio"
 
   project_id       = elestio_project.project.id
-  keycloak_version = null # null means latest version
+  keycloak_version = "latest" # Available versions: https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
   keycloak_pass    = var.keycloak_pass
 
   database        = "postgres"
