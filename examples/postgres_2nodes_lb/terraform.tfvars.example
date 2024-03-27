@@ -1,0 +1,6 @@
+# Generate your Elestio API token: https://dash.elest.io/account/security
+elestio_email     = ""
+elestio_api_token = ""
+
+# Generate a safe password: https://api.elest.io/api/auth/passwordgenerator
+keycloak_password = ""

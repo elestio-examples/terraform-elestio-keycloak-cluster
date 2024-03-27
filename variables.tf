@@ -8,7 +8,7 @@ variable "keycloak_version" {
   description = "The module uses the Keycloak image from the phasetwo repository. Check the available versions at: https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags"
 }
 
-variable "keycloak_pass" {
+variable "keycloak_password" {
   type        = string
   sensitive   = true
   description = <<-EOF
@@ -17,24 +17,24 @@ variable "keycloak_pass" {
   EOF
 
   validation {
-    condition     = length(var.keycloak_pass) >= 10
-    error_message = "keycloak_pass must be at least 10 characters long."
+    condition     = length(var.keycloak_password) >= 10
+    error_message = "keycloak_password must be at least 10 characters long."
   }
   validation {
-    condition     = can(regex("^[a-zA-Z0-9-]+$", var.keycloak_pass))
-    error_message = "keycloak_pass can only contain alphanumeric characters or hyphens `-`."
+    condition     = can(regex("^[a-zA-Z0-9-]+$", var.keycloak_password))
+    error_message = "keycloak_password can only contain alphanumeric characters or hyphens `-`."
   }
   validation {
-    condition     = can(regex("[A-Z]", var.keycloak_pass))
-    error_message = "keycloak_pass must contain at least one uppercase letter."
+    condition     = can(regex("[A-Z]", var.keycloak_password))
+    error_message = "keycloak_password must contain at least one uppercase letter."
   }
   validation {
-    condition     = can(regex("[a-z]", var.keycloak_pass))
-    error_message = "keycloak_pass must contain at least one lowercase letter."
+    condition     = can(regex("[a-z]", var.keycloak_password))
+    error_message = "keycloak_password must contain at least one lowercase letter."
   }
   validation {
-    condition     = can(regex("[0-9]", var.keycloak_pass))
-    error_message = "keycloak_pass must contain at least one number."
+    condition     = can(regex("[0-9]", var.keycloak_password))
+    error_message = "keycloak_password must contain at least one number."
   }
 }
 
@@ -123,7 +123,7 @@ variable "database_port" {
 
 variable "database_name" {
   type    = string
-  default = "postgres"
+  default = "keycloak"
 }
 
 variable "database_schema" {
@@ -135,6 +135,6 @@ variable "database_user" {
   type = string
 }
 
-variable "database_pass" {
+variable "database_password" {
   type = string
 }

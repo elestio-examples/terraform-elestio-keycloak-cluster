@@ -3,12 +3,11 @@ resource "elestio_keycloak" "nodes" {
 
   project_id       = var.project_id
   version          = var.keycloak_version
-  default_password = var.keycloak_pass
+  default_password = var.keycloak_password
   server_name      = each.value.server_name
   provider_name    = each.value.provider_name
   datacenter       = each.value.datacenter
   server_type      = each.value.server_type
-  // Merge the module configuration_ssh_key with the optional ssh_public_keys attribute
   ssh_public_keys = concat(each.value.ssh_public_keys, [{
     username = var.configuration_ssh_key.username
     key_data = var.configuration_ssh_key.public_key
@@ -63,25 +62,24 @@ resource "null_resource" "update_nodes_env" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/resources/cache-ispn-jdbc-ping.xml"
-    destination = "/opt/app/cache-ispn-jdbc-ping.xml"
+    source      = "${path.module}/resources/cache-ispn-tcp-ping.xml"
+    destination = "/opt/app/cache-ispn-tcp-ping.xml"
   }
 
   provisioner "file" {
     content = templatefile("${path.module}/resources/.env.tftpl", {
-      software_password = each.value.admin.password
       software_version  = each.value.version
-      nodes_count       = length(elestio_keycloak.nodes)
-      global_ip         = each.value.global_ip
-      keycloak_user     = "root"
-      keycloak_pass     = var.keycloak_pass
+      software_password = each.value.admin.password
+      admin_email       = each.value.admin_email
+      current_node      = each.value
+      nodes             = elestio_keycloak.nodes
       database          = var.database
       database_host     = var.database_host
       database_port     = var.database_port
       database_name     = var.database_name
       database_schema   = var.database_schema
       database_user     = var.database_user
-      database_pass     = var.database_pass
+      database_password = var.database_password
     })
     destination = "/opt/app/.env"
   }
