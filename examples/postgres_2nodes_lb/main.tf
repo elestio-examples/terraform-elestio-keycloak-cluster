@@ -55,7 +55,7 @@ resource "elestio_postgresql" "database" {
     // It create a dedicated database name for Keycloak
     inline = [
       "cd /opt/app",
-      "docker exec -i postgres psql -U postgres -c 'CREATE DATABASE keycloak'"
+      "docker exec -i app_postgres_1 psql -U postgres -c 'CREATE DATABASE keycloak'"
     ]
   }
 }
@@ -112,6 +112,7 @@ resource "elestio_load_balancer" "load_balancer" {
         target_protocol = "HTTPS"
       },
     ]
+    sticky_session_enabled = true
   }
 }
 

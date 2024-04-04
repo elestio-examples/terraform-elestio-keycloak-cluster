@@ -1,0 +1,10 @@
+09:43:25,373 INFO  [org.infinispan.CLUSTER] ... Starting JGroups channel `ISPN` with stack `tcpping`
+09:43:25,397 INFO  [org.jgroups.JChannel] ... local_addr: 01a51fba-291a-4494-b099-47efa07a39e6, name: c1849767cc39-35257
+09:43:25,461 INFO  [org.jgroups.protocols.FD_SOCK2] (keycloak-cache-init) server listening on *.57800
+09:43:27,496 INFO  [org.jgroups.protocols.pbcast.GMS] ... no members discovered after 2017 ms: creating cluster as coordinator
+...
+09:44:19,674 INFO  [org.infinispan.CLUSTER] ... Received new, MERGED cluster view for channel ISPN ....
+09:44:19,693 INFO  [org.infinispan.CLUSTER] ... Node 36bc2103032c-62574 joined the cluster
+...
+09:44:19,888 INFO  [org.infinispan.CLUSTER] .... Starting rebalance with members [36bc2103032c-62574, c1849767cc39-35257], phase READ_OLD_WRITE_ALL, topology id 4
+09:44:19,896 INFO  [org.infinispan.LIFECYCLE] .... Starting rebalance with members [36bc2103032c-62574, c1849767cc39-35257], phase READ_OLD_WRITE_ALL, topology id 4

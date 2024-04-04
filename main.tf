@@ -88,7 +88,7 @@ resource "null_resource" "update_nodes_env" {
     inline = [
       "cd /opt/app",
       "docker-compose up -d",
-      "sleep 15" // Wait for keycloak to be up
+      "sleep 40" // Wait for keycloak to be up
     ]
   }
 }
