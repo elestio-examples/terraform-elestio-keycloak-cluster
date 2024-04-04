@@ -447,7 +447,7 @@ The new node will join the cluster in a few minutes.
 
 **Secrets** - Do not commit your API token, Keycloak password, SSH key...
 
-**Configuration** - If you want to know all available attributes, check the [clickhouse service documentation](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/clickhouse). E.g. you can disable the service firewall with `firewall_enabled = false`.
+**Configuration** - If you want to know all available attributes, check the [keycloak service documentation](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/keycloak). E.g. you can disable the service firewall with `firewall_enabled = false`.
 
 **Hosting** - Look this guide [Providers, Datacenters and Server Types](https://registry.terraform.io/providers/elestio/elestio/latest/docs/guides/providers_datacenters_server_types) to know about the available options.
 
