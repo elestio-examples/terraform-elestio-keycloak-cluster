@@ -5,7 +5,7 @@ variable "project_id" {
 variable "keycloak_version" {
   type        = string
   nullable    = false
-  description = "The module uses the Keycloak image from the phasetwo repository. Check the available versions at: https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags"
+  description = "Check the available versions at: https://hub.docker.com/r/elestio/keycloak/tags"
 }
 
 variable "keycloak_password" {

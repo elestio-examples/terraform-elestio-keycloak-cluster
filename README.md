@@ -453,7 +453,9 @@ The new node will join the cluster in a few minutes.
 
 **Resources limit** - If you add more nodes, you may attains the resources limit of your account, please visit your account [quota page](https://dash.elest.io/account/add-quota) to ask for more resources.
 
-If you need any help, please contact us at [contact@elest.io](mailto:contact@elest.io).
+## Need help?
+
+If you need any help, you can [open a support ticket](https://dash.elest.io/support/creation) or send an email to [support@elest.io](mailto:support@elest.io).
 We are always happy to help you with any questions you may have.
 ## Inputs
 
@@ -468,7 +470,7 @@ We are always happy to help you with any questions you may have.
 | <a name="input_database_schema"></a> [database\_schema](#input\_database\_schema) | n/a | `string` | `"public"` | no |
 | <a name="input_database_user"></a> [database\_user](#input\_database\_user) | n/a | `string` | n/a | yes |
 | <a name="input_keycloak_password"></a> [keycloak\_password](#input\_keycloak\_password) | Rules: Alphanumeric characters or hyphens `-`, +10 characters, +1 digit, +1 uppercase, +1 lowercase.<br>If you need a valid strong password, you can generate one accessing this Elestio URL: https://api.elest.io/api/auth/passwordgenerator | `string` | n/a | yes |
-| <a name="input_keycloak_version"></a> [keycloak\_version](#input\_keycloak\_version) | The module uses the Keycloak image from the phasetwo repository. Check the available versions at: https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags | `string` | n/a | yes |
+| <a name="input_keycloak_version"></a> [keycloak\_version](#input\_keycloak\_version) | Check the available versions at: https://hub.docker.com/r/elestio/keycloak/tags | `string` | n/a | yes |
 | <a name="input_nodes"></a> [nodes](#input\_nodes) | Each element of this list will create an Elestio Keycloak Resource in your cluster.<br>Read the following documentation to understand what each attribute does, plus the default values: [Elestio Keycloak Resource](https://registry.terraform.io/providers/elestio/elestio/latest/docs/resources/keycloak). | <pre>list(<br>    object({<br>      server_name                                       = string<br>      provider_name                                     = string<br>      datacenter                                        = string<br>      server_type                                       = string<br>      admin_email                                       = optional(string)<br>      alerts_enabled                                    = optional(bool)<br>      app_auto_update_enabled                           = optional(bool)<br>      backups_enabled                                   = optional(bool)<br>      custom_domain_names                               = optional(set(string))<br>      firewall_enabled                                  = optional(bool)<br>      keep_backups_on_delete_enabled                    = optional(bool)<br>      remote_backups_enabled                            = optional(bool)<br>      support_level                                     = optional(string)<br>      system_auto_updates_security_patches_only_enabled = optional(bool)<br>      ssh_public_keys = optional(list(<br>        object({<br>          username = string<br>          key_data = string<br>        })<br>      ), [])<br>    })<br>  )</pre> | `[]` | no |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | n/a | `string` | n/a | yes |
 
