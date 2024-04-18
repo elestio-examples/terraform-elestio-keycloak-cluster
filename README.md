@@ -140,7 +140,7 @@ provider "elestio" {
 }
 
 resource "elestio_project" "project" {
-  name = "Keycloak Cluster"
+  name = "keycloak-cluster"
 }
 
 locals {
@@ -483,14 +483,14 @@ We are always happy to help you with any questions you may have.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_elestio"></a> [elestio](#provider\_elestio) | >= 0.15.0 |
+| <a name="provider_elestio"></a> [elestio](#provider\_elestio) | >= 0.17.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | >= 3.2.0 |
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
-| <a name="requirement_elestio"></a> [elestio](#requirement\_elestio) | >= 0.15.0 |
+| <a name="requirement_elestio"></a> [elestio](#requirement\_elestio) | >= 0.17.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.0 |
 ## Resources
 

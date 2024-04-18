@@ -26,7 +26,7 @@ provider "elestio" {
 }
 
 resource "elestio_project" "project" {
-  name = "Keycloak Cluster"
+  name = "keycloak-cluster"
 }
 
 locals {
