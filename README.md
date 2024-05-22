@@ -169,7 +169,7 @@ resource "elestio_postgresql" "database" {
     // It create a dedicated database name for Keycloak
     inline = [
       "cd /opt/app",
-      "docker exec -i app_postgres_1 psql -U postgres -c 'CREATE DATABASE keycloak'"
+      "docker-compose exec -T postgres psql -U postgres -c 'CREATE DATABASE keycloak'"
     ]
   }
 }
