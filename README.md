@@ -53,13 +53,13 @@ module "cluster" {
       server_name   = "keycloak-01"
       provider_name = "hetzner"
       datacenter    = "fsn1"
-      server_type   = "SMALL-1C-2G"
+      server_type   = "MEDIUM-2C-4G"
     },
     {
       server_name   = "keycloak-02"
       provider_name = "hetzner"
       datacenter    = "fsn1"
-      server_type   = "SMALL-1C-2G"
+      server_type   = "MEDIUM-2C-4G"
     },
   ]
 
@@ -153,7 +153,7 @@ resource "elestio_postgresql" "database" {
   project_id    = elestio_project.project.id
   provider_name = "hetzner"
   datacenter    = "fsn1"
-  server_type   = "SMALL-1C-2G"
+  server_type   = "MEDIUM-2C-4G"
   ssh_public_keys = [{
     username = local.ssh_key_name
     key_data = chomp(file(local.ssh_public_key_path))
@@ -194,13 +194,13 @@ module "cluster" {
       server_name   = "keycloak-1"
       provider_name = "hetzner"
       datacenter    = "fsn1"
-      server_type   = "SMALL-1C-2G"
+      server_type   = "MEDIUM-2C-4G"
     },
     {
       server_name   = "keycloak-2"
       provider_name = "hetzner"
       datacenter    = "nbg1"
-      server_type   = "SMALL-1C-2G"
+      server_type   = "MEDIUM-2C-4G"
     },
   ]
 
@@ -215,7 +215,7 @@ resource "elestio_load_balancer" "load_balancer" {
   project_id    = elestio_project.project.id
   provider_name = "hetzner"
   datacenter    = "fsn1"
-  server_type   = "SMALL-1C-2G"
+  server_type   = "MEDIUM-2C-4G"
   config = {
     target_services = [for node in module.cluster.nodes : node.id]
     forward_rules = [
@@ -421,20 +421,20 @@ nodes = [
     server_name   = "keycloak-01"
     provider_name = "hetzner"
     datacenter    = "fsn1"
-    server_type   = "SMALL-1C-2G"
+    server_type   = "MEDIUM-2C-4G"
   },
   {
     server_name   = "keycloak-02"
     provider_name = "hetzner"
     datacenter    = "fsn1"
-    server_type   = "SMALL-1C-2G"
+    server_type   = "MEDIUM-2C-4G"
   },
   # You can add more nodes here
   {
     server_name   = "keycloak-03"
     provider_name = "hetzner"
     datacenter    = "fsn1"
-    server_type   = "SMALL-1C-2G"
+    server_type   = "MEDIUM-2C-4G"
   },
 ]
 ```
@@ -483,14 +483,14 @@ We are always happy to help you with any questions you may have.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_elestio"></a> [elestio](#provider\_elestio) | >= 0.17.0 |
+| <a name="provider_elestio"></a> [elestio](#provider\_elestio) | >= 0.19.3 |
 | <a name="provider_null"></a> [null](#provider\_null) | >= 3.2.0 |
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
-| <a name="requirement_elestio"></a> [elestio](#requirement\_elestio) | >= 0.17.0 |
+| <a name="requirement_elestio"></a> [elestio](#requirement\_elestio) | >= 0.19.3 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.0 |
 ## Resources
 
